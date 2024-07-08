@@ -16,7 +16,7 @@ cor_esquerda = RoboCor(Port="3")
 
 motor_d = RoboMotor(Port="d")
 motor_e = RoboMotor(Port="a", reverse = True)
-motor_garra = RoboMotor(Port="b", reverse= True)
+# motor_garra = RoboMotor(Port="b", reverse= True)
 
 sensor_vendra = hub_type.getImports().getLUMPDevice(Port="1") 
 
@@ -28,7 +28,7 @@ base = RoboBase(  # passando as informações do robo p uma variavel
     motorDireito= motor_d,
     motorEsquerdo= motor_e,
     diametroRoda= 46,
-    distanciaEntreAsRodas= 140
+    distanciaEntreAsRodas= 99
     )
 
 # VARIAVEIS
@@ -41,18 +41,24 @@ angulo_verificar = 10
 
 viradaAngulo = 0
 
+BRANCO = 70
+
+PRETO = 30
+
 # FUNÇÕES
 
 def VerdeEsquerda():
     print ("mover")
     base.moverDistancia(60)
-    base.virar90grausDireita()
+    # base.virar90grausDireita()
+    base.virarAngulo(-100)
     base.pararMotores()
 
 def VerdeDireita():
     print ("mover")
     base.moverDistancia(60)
-    base.virar90grausEsquerda()
+    # base.virar90grausEsquerda()
+    base.virarAngulo(100)
     base.pararMotores()
 
 def VerificarCorVE():
@@ -69,18 +75,19 @@ def VerificarCorVDEx():
 
 def VerificarGap():
     viradaMaxima = 20
-    base.moverDistancia (20)
+    base.moverDistancia (70)
 
     print("VerificarGap")  
     viradaAngulo = 0
+
+
     while viradaAngulo <= viradaMaxima:
+        
         base.virarAngulo(angulo=angulo_verificar)
         viradaAngulo += 1
-        VerificarCorVD() and VerificarCorVE()
         print("virarAngulo")
-
     
-        if VerificarCorVD() < 30 or VerificarCorVE() < 30:
+        if VerificarCorVD() < PRETO or VerificarCorVE() < PRETO:
             print("deu false") 
             base.pararMotores()
             print("pararMotorInstantaneamente")      
@@ -91,26 +98,30 @@ def VerificarGap():
     while viradaAngulo >= -viradaMaxima:
         base.virarAngulo(angulo= -angulo_verificar)
         viradaAngulo -= 1
-        VerificarCorVD() and VerificarCorVE()
         print("virarAngulo")            
 
-        if VerificarCorVD() < 30 or VerificarCorVE() < 30:
+        if VerificarCorVD() < PRETO or VerificarCorVE() < PRETO:
             print("deu false") 
             base.pararMotores()
             return False
         print("entrou aqui")    
 
 
-    base.virarAngulo(angulo=15*angulo_verificar)
+    base.virarAngulo(angulo=21*angulo_verificar)
     return True   
+
+
 
 def taNoGap():
      print("taNoGap")
-     if VerificarGap() == True: 
-        base.pararMotores()
-        base.moverDistancia(100)
-        base.pararMotores()
-        return
+    #  if VerificarGap() == True: 
+     base.pararMotores()
+     base.moverDistancia(100)
+     base.pararMotores()
+
+    #  while sensor_esq_vedra >= 70 and sensor_dir_vedra >= 70:
+    #     base.moverDistancia(100)
+    #     base.pararMotores()
 
 
 def distanciaParar():
@@ -125,10 +136,7 @@ def distanciaParar():
 #  base.moverSemParar(velocidade=100, angulo_curvatura=0)
 
 # WHILE TRUE
-
-# while True:
-    
-    
+      
 #     motor_garra.resetarAngulo()
 #     motor_garra.moverUmAngulo(60, 10)
 
@@ -150,7 +158,6 @@ while True:
 #     quando cor esquerda
     if cor_esquerda.pegarCor()== hub_type.getImports().getColor().GREEN:
         print ("verde esquerda visto")
-        base.moverDistancia(20)
 
         if cor_esquerda.pegarCor() == hub_type.getImports().getColor().GREEN:
             VerdeEsquerda()
@@ -159,7 +166,8 @@ while True:
     # # quando a direita ver verde    
     if cor_direita.pegarCor()== hub_type.getImports().getColor().GREEN:
         print ("verde esquerda visto")
-        base.moverDistancia(20)
+        base.moverDistancia(10)
+        
 
         if cor_direita.pegarCor() == hub_type.getImports().getColor().GREEN:
             VerdeDireita()
@@ -170,26 +178,40 @@ while True:
     # ele vai verificar se ta no gap, caso esteja, 
     # vai realizar o codigo de gap e caso nao, vai ir p preto
 
-    if sensor_esq_vedra >= 70 and sensor_dir_vedra >= 70:
+    if sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
         print("viu branco")
         print(sensor_esq_vedra, sensor_dir_vedra)
 
-        if sensor_dirEx_vedra <= 30 or sensor_esqEx_vedra <= 30:
-            base.moverDistancia(-50)
+        # if sensor_dirEx_vedra <= PRETO or sensor_esqEx_vedra <= PRETO:
+        #     print ("viu extremidade")
+        #     base.moverDistancia(-80)
 
-        else:
-            taNoGap()
+        if VerificarGap() == True: 
+
+            while sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
+                taNoGap()
+                sensor_esq_vedra = VerificarCorVE()
+                sensor_dir_vedra = VerificarCorVD()
+                sensor_dirEx_vedra = VerificarCorVDEx()
+                sensor_esqEx_vedra = VerificarCorVEEx()
+
+                if sensor_esq_vedra < PRETO and sensor_dir_vedra < PRETO:
+                    break
+        else: 
+            print ("saiu do gap")
 
     # codigo seguidor de linha
     else: 
         print ("linha preta")
-        sensor_esq_vedra = VerificarCorVE()
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
         sensor_dir_vedra = VerificarCorVD()
         codigoSeguidor.seguirLinhaPreta(
         kd=0.5, # analisa de acordo com a poisçao do começo
         kp=1, # proporcional no momento instante que ocorre o erro
-        cor_vermelha_direta=sensor_esq_vedra,
-        cor_vermelha_esquerda=sensor_dir_vedra,
+        cor_vermelha_direta=sensor_esq_vedra + sensor_esqEx_vedra * 2,
+        cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2,
         motor_direito=motor_d,
         motor_esquerdo=motor_e,
         potencia_motores=60
