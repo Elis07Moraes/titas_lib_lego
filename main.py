@@ -2,6 +2,7 @@
 
 # script.py
 from titas_lib import HubType, RoboHub, SeguidorLinha, RoboBrick, RoboMotor, RoboCor, RoboUltrassonico, RoboBase, RoboImports, Color
+from pybricks.tools import wait 
 
 # DEFINIÇÕES
 
@@ -28,7 +29,7 @@ base = RoboBase(  # passando as informações do robo p uma variavel
     motorDireito= motor_d,
     motorEsquerdo= motor_e,
     diametroRoda= 46,
-    distanciaEntreAsRodas= 99
+    distanciaEntreAsRodas= 320
     )
 
 # VARIAVEIS
@@ -47,18 +48,39 @@ PRETO = 30
 
 # FUNÇÕES
 
+# (5, 18, 5)
+
+def eVerdeD():
+    cor = cor_direita.pegarRGB()
+    # print(cor)
+    if cor[1] > 15:
+        if cor[1] >= 2.2 * cor[0]:
+            return True
+        
+    return False
+
+def eVerdeE():
+    cor = cor_esquerda.pegarRGB()
+    # print(cor) 
+    if cor[1] > 15:
+        if cor[1] >= 2.2 * cor[0]:
+            return True
+        
+    return False
+
+
 def VerdeEsquerda():
     print ("mover")
     base.moverDistancia(60)
     # base.virar90grausDireita()
-    base.virarAngulo(-100)
+    base.virarAngulo(-80)
     base.pararMotores()
 
 def VerdeDireita():
     print ("mover")
     base.moverDistancia(60)
     # base.virar90grausEsquerda()
-    base.virarAngulo(100)
+    base.virarAngulo(80)
     base.pararMotores()
 
 def VerificarCorVE():
@@ -74,12 +96,11 @@ def VerificarCorVDEx():
     return sensor_vendra.read(0)[3]
 
 def VerificarGap():
-    viradaMaxima = 20
-    base.moverDistancia (70)
+    viradaMaxima = 10
+    base.moverDistancia(50)
 
     print("VerificarGap")  
     viradaAngulo = 0
-
 
     while viradaAngulo <= viradaMaxima:
         
@@ -107,7 +128,7 @@ def VerificarGap():
         print("entrou aqui")    
 
 
-    base.virarAngulo(angulo=21*angulo_verificar)
+    base.virarAngulo(angulo=viradaMaxima*angulo_verificar)
     return True   
 
 
@@ -140,6 +161,22 @@ def distanciaParar():
 #     motor_garra.resetarAngulo()
 #     motor_garra.moverUmAngulo(60, 10)
 
+# while True: 
+#     print(sensor_vendra.read(0))
+#     wait(1000)
+
+# while True:
+#     print(eVerdeE())
+#     wait(1000)
+    # if(eVerdeD() and eVerdeE()):
+    #     print("pegou dois verdes")
+    # elif(eVerdeD()):
+    #     print("direito")
+    # elif(eVerdeE()):
+    #     print("esquerdo")
+    # else:
+    #     print("nada")
+
 # vai parar quando for branco e depois seguir reto ate encontrar preto, e quando isso acontecer, vai seguir reto
 while True:
     # motor_d.moverPorPotencia(potencia=70)
@@ -156,35 +193,95 @@ while True:
 
 # para quando ver verde: 
 #     quando cor esquerda
-    if cor_esquerda.pegarCor()== hub_type.getImports().getColor().GREEN:
+    if eVerdeE():
         print ("verde esquerda visto")
+        print(cor_esquerda.pegarRGB())
+        base.moverDistancia(2)
+        base.pararMotores()
+        robo_brick.beep(500, 100)
+        # wait(20)
 
-        if cor_esquerda.pegarCor() == hub_type.getImports().getColor().GREEN:
-            VerdeEsquerda()
+        if eVerdeE():
+            base.moverDistancia(1)
+            base.pararMotores()
+            print("verde dnv esquerda")
+            print(cor_esquerda.pegarRGB())
+            robo_brick.beep(500, 100)
+            # cor_esquerda.pegarRGB()[1]
+            # wait(20)(
+            print("teste")
+            if eVerdeD():
+                print ("verde direita")
+                base.moverDistancia(-80)
+                # base.pararMotores()
+                base.virarAngulo(-180)
+                base.pararMotores()
+                
+            else:
+                cor_esquerda.pegarRGB()[0] # preto
+                if cor_esquerda.pegarRGB()[0] < 10:
+                    robo_brick.beep(100, 100)
+                    if cor_esquerda.pegarRGB()[1] > cor_esquerda.pegarRGB()[0]:
+                        print("preto apos verde esquerda")
+                        VerdeEsquerda()
+                        base.pararMotores()
+
+                if cor_esquerda.pegarRGB()[0] > 47: #branco
+                    print ("branco apos verde")
+                    if cor_esquerda.pegarRGB()[0] > cor_esquerda.pegarRGB()[0]:
+                        robo_brick.beep(700, 100)
+                        base.moverDistancia(10)
+                        base.pararMotores()
+
+                        
+
+    # # quando a direita ver verde 
+    elif eVerdeD():
+        print ("verde direito visto")
+        print(cor_direita.pegarRGB())
+        base.moverDistancia(2)
         base.pararMotores()
 
-    # # quando a direita ver verde    
-    if cor_direita.pegarCor()== hub_type.getImports().getColor().GREEN:
-        print ("verde esquerda visto")
-        base.moverDistancia(10)
-        
+        if eVerdeD():
+            print("verde dnv direita")
+            print(cor_direita.pegarRGB())
+            base.moverDistancia(1)
+            base.pararMotores()
+            # cor_direita.pegarRGB()[1]
+            print("teste")
+            if eVerdeE() : #verificar se o outro tb eh verde
+                print ("verde esquerda")
+                base.moverDistancia(-80)
+                # base.pararMotores()
+                base.virarAngulo(-180)
+                base.pararMotores()
 
-        if cor_direita.pegarCor() == hub_type.getImports().getColor().GREEN:
-            VerdeDireita()
-        base.pararMotores()
+            else:
+                cor_direita.pegarRGB()[0]
+                if cor_direita.pegarRGB()[0] < 10:
+                    if cor_direita.pegarRGB()[1] > cor_direita.pegarRGB()[0]:
+                            print("preto apos verde direita")
+                            VerdeDireita()
+                            base.pararMotores()
+
+                if cor_direita.pegarRGB()[0] > 50:
+                    print ("branco apos verde")
+                    if cor_direita.pegarRGB()[1] > cor_direita.pegarRGB()[0]:
+                            base.moverDistancia(20)
+                            base.pararMotores()
 
         
     # quando entrar no branco, 
     # ele vai verificar se ta no gap, caso esteja, 
     # vai realizar o codigo de gap e caso nao, vai ir p preto
 
-    if sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
+    elif sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
         print("viu branco")
         print(sensor_esq_vedra, sensor_dir_vedra)
 
-        # if sensor_dirEx_vedra <= PRETO or sensor_esqEx_vedra <= PRETO:
-        #     print ("viu extremidade")
-        #     base.moverDistancia(-80)
+        if sensor_dirEx_vedra <= PRETO or sensor_esqEx_vedra <= PRETO:
+            print ("viu extremidade")
+            base.moverDistancia(-80)
 
         if VerificarGap() == True: 
 
@@ -202,17 +299,17 @@ while True:
 
     # codigo seguidor de linha
     else: 
-        print ("linha preta")
+        # print ("linha preta")
         sensor_esqEx_vedra = VerificarCorVEEx()
         sensor_esq_vedra = VerificarCorVE() 
         sensor_dirEx_vedra = VerificarCorVDEx()
         sensor_dir_vedra = VerificarCorVD()
         codigoSeguidor.seguirLinhaPreta(
-        kd=0.5, # analisa de acordo com a poisçao do começo
+        kd=0, # analisa de acordo com a poisçao do começo
         kp=1, # proporcional no momento instante que ocorre o erro
-        cor_vermelha_direta=sensor_esq_vedra + sensor_esqEx_vedra * 2,
+        cor_vermelha_direta=(sensor_esq_vedra + sensor_esqEx_vedra * 2) - 20,
         cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2,
         motor_direito=motor_d,
         motor_esquerdo=motor_e,
-        potencia_motores=60
+        potencia_motores=70
         )
