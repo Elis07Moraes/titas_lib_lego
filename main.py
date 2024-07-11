@@ -28,7 +28,7 @@ codigoSeguidor = SeguidorLinha()
 base = RoboBase(  # passando as informações do robo p uma variavel
     motorDireito= motor_d,
     motorEsquerdo= motor_e,
-    diametroRoda= 46,
+    diametroRoda= 44,
     distanciaEntreAsRodas= 320
     )
 
@@ -54,8 +54,55 @@ pretoDirCor = 3
 
 brancoDirCor = 4
 
+BRANCODIR = 52
+
+BRANCOESQ = 52
+
+PRETODIR = 10 
+
+PRETOESQ = 10
+
+
+seguindoLinha = True
+
 
 # FUNÇÕES
+
+def VerificarCorVE():
+    return sensor_vendra.read(0)[1] 
+
+def VerificarCorVEEx():
+    return sensor_vendra.read(0)[0] 
+
+def VerificarCorVD():
+    return sensor_vendra.read(0)[2]
+
+def VerificarCorVDEx():
+    return sensor_vendra.read(0)[3]
+
+
+
+def alinharLinha():
+        i=0
+        while i < 100:
+            sensor_esqEx_vedra = VerificarCorVEEx()
+            sensor_esq_vedra = VerificarCorVE() 
+            sensor_dirEx_vedra = VerificarCorVDEx()
+            sensor_dir_vedra = VerificarCorVD()
+            print(sensor_dir_vedra)
+
+            print(sensor_esq_vedra)
+            codigoSeguidor.seguirLinhaPreta(
+            kd=0.5, # analisa de acordo com a poisçao do começo
+            kp=1, # proporcional no momento instante que ocorre o erro
+            cor_vermelha_direta=(sensor_esq_vedra + sensor_esqEx_vedra * 2) - 20,
+            cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2,
+            motor_direito=motor_d,
+            motor_esquerdo=motor_e,
+            potencia_motores=0
+            )
+            i=i+1
+            wait(10)
 
 def eVerdeD(): # funcao para pegar a cor verde do lado direito usando sistema rgb, usando verde e vermelho p comparacao
     cor = cor_direita.pegarRGB()
@@ -78,6 +125,8 @@ def eVerdeE(): # funcao para pegar a cor verde do lado esquerda usando sistema r
 
 # funcao para mover para esquerda quando ver verde
 def VerdeEsquerda():
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dir_vedra = VerificarCorVD()
     print ("mover")
     base.moverDistancia(80)
     # base.virar90grausDireita()
@@ -85,27 +134,37 @@ def VerdeEsquerda():
     base.pararMotores()
 
     while sensor_esq_vedra >= BRANCO or sensor_dir_vedra >= BRANCO: 
-        base.virarAngulo(-60)
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dir_vedra = VerificarCorVD()
+        base.virarAngulo(-10)
         print(" branco virar verde esq")
 
 
         if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
+            sensor_esq_vedra = VerificarCorVE() 
+            sensor_dir_vedra = VerificarCorVD()
             print("achou preto esq") 
             break
 
 
 # funcao para mover pra direita quando for verde
 def VerdeDireita():
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dir_vedra = VerificarCorVD()
     print ("mover")
     base.moverDistancia(80)
     # base.virar90grausEsquerda()
     base.virarAngulo(90)
     base.pararMotores()
     while sensor_esq_vedra >= BRANCO or sensor_dir_vedra >= BRANCO:
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dir_vedra = VerificarCorVD()
         print(" branco virar verde") 
-        base.virarAngulo(60)
+        base.virarAngulo(10)
         
-        if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO: 
+        if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
+            sensor_esq_vedra = VerificarCorVE() 
+            sensor_dir_vedra = VerificarCorVD() 
             print("achou preto")
             break
 
@@ -155,7 +214,8 @@ def VerificarGap():
         print("entrou aqui")    
 
 
-    base.virarAngulo(angulo=viradaMaxima*angulo_verificar)
+    base.virarAngulo(angulo=( viradaMaxima*angulo_verificar) + 5)
+    # base.virar90grausDireita()
     return True   
 
 
@@ -181,47 +241,62 @@ def Distancia():
 
 # fncao para desviar do obstaculo
 def Obstaculo():
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dir_vedra = VerificarCorVD()
     if Distancia() == True: 
         print ("obstaculo")
-        base.moverDistancia(-50)
+        alinharLinha()
+        base.moverDistancia(-30)
         base.pararMotores()
-        base.virar90grausDireita()
+        base.virarAngulo(-90)
         base.pararMotores()
-        base.moverDistancia(360)
+        base.moverDistancia(310)
         base.pararMotores()
-        base.virar90grausEsquerda()
+        base.virarAngulo(90)
         base.pararMotores()
         sensor_esq_vedra = VerificarCorVE() 
         sensor_dir_vedra = VerificarCorVD()
-        print(sensor_esq_vedra, sensor_dir_vedra)
-        base.moverDistancia(650)
+        base.moverDistancia(670)
         base.pararMotores()
-        base.virar90grausEsquerda()
+        base.virarAngulo(90)
         sensor_esq_vedra = VerificarCorVE() 
         sensor_dir_vedra = VerificarCorVD()
-        base.moverDistancia(250)
-        sensor_esq_vedra = VerificarCorVE() 
-        sensor_dir_vedra = VerificarCorVD()
-
-        # while sensor_dir_vedra >= BRANCO or sensor_esq_vedra >= BRANCO:
-        #     sensor_esq_vedra = VerificarCorVE() 
-        #     sensor_dir_vedra = VerificarCorVD()
-        #     base.moverSemParar(150)
-        #     sensor_esq_vedra = VerificarCorVE() 
-        #     sensor_dir_vedra = VerificarCorVD()
-
-        if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-            print("viu preto")
+        while sensor_dir_vedra > PRETO and sensor_esq_vedra > PRETO:
+            print(sensor_dir_vedra, sensor_esq_vedra)
+            base.moverSemParar(100, 0)
             sensor_esq_vedra = VerificarCorVE() 
             sensor_dir_vedra = VerificarCorVD()
-            base.moverDistancia(80)
-            base.pararMotores()
-            base.virar90grausDireita()
-            base.pararMotores()
+            cor_esquerda.pegarRGB()
+            cor_direita.pegarRGB()
+            sensor_esq_vedra = VerificarCorVE() 
+            sensor_dir_vedra = VerificarCorVD()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                print("preto obstaculo")
+                cor_esquerda.pegarRGB()
+                cor_direita.pegarRGB()
+                sensor_esq_vedra = VerificarCorVE() 
+                sensor_dir_vedra = VerificarCorVD()  
+                base.moverDistancia(100)
+                if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                    cor_esquerda.pegarRGB()
+                    cor_direita.pegarRGB()
+                    sensor_esq_vedra = VerificarCorVE() 
+                    sensor_dir_vedra = VerificarCorVD()               
+                    base.pararMotores()
+                    wait(100)
+                    base.moverDistancia(50)
+                    base.pararMotores()
+                    base.virarAngulo(-90)
+                    base.pararMotores()
+                break
 
 
 # para quando ver prata
 def Prata():
+    sensor_esqEx_vedra = VerificarCorVEEx()
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dirEx_vedra = VerificarCorVDEx()
+    sensor_dir_vedra = VerificarCorVD()
     if cor_direita.pegarRGB() >= (95, 95, 95) and cor_esquerda.pegarRGB() >= (95, 95, 95):
         return True
     
@@ -237,11 +312,29 @@ def Prata():
 #     motor_garra.moverUmAngulo(60, 10)
 
 # while True: 
-#     print(cor_direita.pegarRGB())
+#     print(cor_direita.pegarRGB() and cor_esquerda.pegarRGB())
 #     wait(2000)
 
-# vai parar quando for branco e depois seguir reto ate encontrar preto, e quando isso acontecer, vai seguir reto
-while True:
+# while True: 
+#     print("alinhar")
+#     alinharLinha()
+
+def seguidorLinha():
+    global seguindoLinha
+    global distancia
+    global angulo_verificar
+    global viradaAngulo
+    global BRANCO
+    global PRETO
+    global pretoEsqCor
+    global brancoEsqCor
+    global pretoDirCor
+    global brancoDirCor 
+    global BRANCODIR
+    global BRANCOESQ
+    global PRETODIR
+    global PRETOESQ
+
     # motor_d.moverPorPotencia(potencia=70)
     # motor_e.moverPorPotencia(potencia=70)
     sensor_esq_vedra = VerificarCorVE() # definindo variveis 
@@ -268,6 +361,10 @@ while True:
 # para quando ver verde: 
 #     quando cor esquerda
     if eVerdeE():
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
         print ("verde esquerda visto")
         print(cor_esquerda.pegarRGB())
         base.moverDistancia(2)
@@ -284,31 +381,46 @@ while True:
             # cor_esquerda.pegarRGB()[1]
             # wait(20)(
             print("teste")
-            if eVerdeD():
+            # if eVerdeD(): # sem redutor
+            #     print ("verde direita")
+            #     base.moverDistancia(-80)
+            #     # base.pararMotores()
+            #     base.virarAngulo(-182)
+            #     base.pararMotores()
+
+            if eVerdeD(): # dois verdes com um redutor atras
                 print ("verde direita")
-                base.moverDistancia(-80)
+                base.moverDistancia(90)
                 # base.pararMotores()
-                base.virarAngulo(-180)
+                base.virarAngulo(-182)
                 base.pararMotores()
                 
             else:
-                cor_esquerda.pegarRGB()[0] # preto usando o vermelho 
-                if cor_esquerda.pegarRGB()[0] < 10:
+                cor_esq_verm = cor_esquerda.pegarRGB()[0]
+                cor_esq_verd = cor_esquerda.pegarRGB()[1] # preto usando o vermelho 
+                if cor_esq_verm < PRETOESQ:
                     # robo_brick.beep(100, 100)
-                    if cor_esquerda.pegarRGB()[1] > cor_esquerda.pegarRGB()[0]:
+                    if cor_esq_verd > cor_esq_verm:
                         print("preto apos verde esquerda")
+                        base.moverDistancia(75)
+                        base.pararMotores()
                         VerdeEsquerda()
+                        base.moverDistancia(-55)
                         base.pararMotores()
 
 
-                if cor_esquerda.pegarRGB()[0] > 52: #branco tb usando vermelho 
+                if cor_esq_verm > BRANCOESQ: #branco tb usando vermelho 
                     print ("branco apos verde")
-                    if cor_esquerda.pegarRGB()[0] > cor_esquerda.pegarRGB()[0]:
+                    if cor_esq_verd > cor_esq_verm:
                         base.moverDistancia(10)
                         base.pararMotores()                   
 
     # # quando a direita ver verde 
-    elif eVerdeD(): 
+    elif eVerdeD():
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
         print ("verde direito visto")
         print(cor_direita.pegarRGB())
         base.moverDistancia(10)
@@ -321,26 +433,40 @@ while True:
             base.pararMotores()
             # cor_direita.pegarRGB()[1]
             # print("teste")
-            if eVerdeE(): #verificar se o outro tb eh verde
+            # if eVerdeE(): #verificar se o outro tb eh verde mas sem redutor
+            #     print ("verde esquerda")
+            #     base.pararMotores()
+            #     if eVerdeE():
+            #         base.moverDistancia(-80)
+            #             # base.pararMotores()
+            #         base.virarAngulo(-182)
+            #         base.pararMotores()
+
+            if eVerdeE(): #verificar se o outro tb eh verde c redutor atras
                 print ("verde esquerda")
-                base.moverDistancia(-80)
-                # base.pararMotores()
-                base.virarAngulo(-180)
                 base.pararMotores()
+                if eVerdeE():
+                    base.moverDistancia(90)
+                        # base.pararMotores()
+                    base.virarAngulo(-182)
+                    base.pararMotores()
 
             else:
-                cor_direita.pegarRGB()[0] and cor_direita.pegarRGB()[1]
-                if cor_direita.pegarRGB()[0] < 10:
-                    if cor_direita.pegarRGB()[1] > cor_direita.pegarRGB()[0]:
+                cor_dir_verm = cor_direita.pegarRGB()[0]
+                cor_dir_verd = cor_direita.pegarRGB()[1]
+                if cor_dir_verm < PRETODIR:
+                    if cor_dir_verd > cor_dir_verm:
                             print("preto apos verde direita")
+                            base.moverDistancia(75)
+                            base.pararMotores()
                             print(cor_direita.pegarRGB())
-                            cor_direita.pegarRGB()[0] and cor_direita.pegarRGB()[1]
                             VerdeDireita()
+                            base.moverDistancia(-55)
                             base.pararMotores()
 
-                if cor_direita.pegarRGB()[0] > 52:
+                if cor_dir_verm > BRANCODIR:
                     print ("branco apos verde")
-                    if cor_direita.pegarRGB()[1] > cor_direita.pegarRGB()[0]:
+                    if cor_dir_verd > cor_dir_verm:
                             base.moverDistancia(20)
                             base.pararMotores()
 
@@ -350,6 +476,10 @@ while True:
     # vai realizar o codigo de gap e caso nao, vai ir p preto
 
     elif sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
         print("viu branco")
         print(sensor_esq_vedra, sensor_dir_vedra)
 
@@ -377,11 +507,12 @@ while True:
 
     elif Prata() == True: 
         print ("prata")
+        seguindoLinha = False
         base.pararMotores()
 
     # codigo seguidor de linha
     else: 
-        # print ("linha preta")
+        print ("linha preta")
         sensor_esqEx_vedra = VerificarCorVEEx()
         sensor_esq_vedra = VerificarCorVE() 
         sensor_dirEx_vedra = VerificarCorVDEx()
@@ -393,5 +524,27 @@ while True:
         cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2,
         motor_direito=motor_d,
         motor_esquerdo=motor_e,
-        potencia_motores=60
+        potencia_motores=70
         )
+
+def areaDeResgate():
+    sensor_esqEx_vedra = VerificarCorVEEx()
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dirEx_vedra = VerificarCorVDEx()
+    sensor_dir_vedra = VerificarCorVD()
+    global seguindoLinha
+    base.moverSemParar(100, 0)
+    if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
+        seguindoLinha == True
+
+    
+    print("akksks")
+
+##INICIO do codigo
+
+
+while True:
+    if seguindoLinha == True:
+        seguidorLinha()
+    else:
+        areaDeResgate()
