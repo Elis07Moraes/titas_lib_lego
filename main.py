@@ -17,7 +17,7 @@ cor_esquerda = RoboCor(Port="3")
 
 motor_d = RoboMotor(Port="d")
 motor_e = RoboMotor(Port="a", reverse = True)
-# motor_garra = RoboMotor(Port="b", reverse= True)
+motor_garra = RoboMotor(Port="b", reverse= True)
 
 sensor_vendra = hub_type.getImports().getLUMPDevice(Port="1") 
 
@@ -64,6 +64,9 @@ PRETOESQ = 10
 
 
 seguindoLinha = True
+
+distanciaArea = 1000
+
 
 
 # FUNÇÕES
@@ -297,8 +300,14 @@ def Prata():
     sensor_esq_vedra = VerificarCorVE() 
     sensor_dirEx_vedra = VerificarCorVDEx()
     sensor_dir_vedra = VerificarCorVD()
-    if cor_direita.pegarRGB() >= (95, 95, 95) and cor_esquerda.pegarRGB() >= (95, 95, 95):
-        return True
+    if cor_direita.pegarRGB() >= (80, 80, 80) or cor_esquerda.pegarRGB() >= (80, 80, 80):
+        print(cor_direita.pegarRGB() and cor_esquerda.pegarRGB())
+        base.moverDistancia(20)
+        base.pararMotores()
+
+        if cor_direita.pegarRGB() >= (90, 90, 90) or cor_esquerda.pegarRGB() >= (90, 90, 90):
+            print(cor_direita.pegarRGB() and cor_esquerda.pegarRGB())
+            return True
     
     return False
 
@@ -508,6 +517,7 @@ def seguidorLinha():
     elif Prata() == True: 
         print ("prata")
         seguindoLinha = False
+        return
         base.pararMotores()
 
     # codigo seguidor de linha
@@ -528,23 +538,257 @@ def seguidorLinha():
         )
 
 def areaDeResgate():
+    global distanciaArea
+    global seguindoLinha
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+
     sensor_esqEx_vedra = VerificarCorVEEx()
     sensor_esq_vedra = VerificarCorVE() 
     sensor_dirEx_vedra = VerificarCorVDEx()
     sensor_dir_vedra = VerificarCorVD()
-    global seguindoLinha
-    base.moverSemParar(100, 0)
-    if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
-        seguindoLinha == True
+    motor_garra.moverDuranteUmTempo(-500, 1000)
+    motor_garra.deixarMotorLivre()
+    base.moverDistancia(550)
+    base.pararMotores()
+    print("verificacAO")
+
+    while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO:
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
+        VerificacaoArea()
+
+        # if distanciaArea <= 10:
+        #     base.pararMotores()
+        #     print("distancia area")
+
+        if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
+            robo_brick.beep(500, 100)
+            base.pararMotores()
+            seguindoLinha = True
+            return
 
     
     print("akksks")
 
+
+def VerificacaoArea():
+    global distanciaArea
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    global sensor_esqEx_vedra
+    global sensor_esq_vedra 
+    global sensor_dirEx_vedra 
+    global sensor_dir_vedra 
+    sensor_esqEx_vedra = VerificarCorVEEx()
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dirEx_vedra = VerificarCorVDEx()
+    sensor_dir_vedra = VerificarCorVD()
+    if distanciaArea <= 100:
+        robo_brick.beep(500, 100)
+        base.pararMotores()
+        print("distancia area")
+        if distanciaArea <= 100:
+            robo_brick.beep(500, 100)
+            print("mover area")
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+
+    wait(1500)
+    base.virarAngulo(90)
+    wait(1500)
+    base.moverDistancia(100)
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    if distanciaArea <= 100:
+        robo_brick.beep(500,100)
+        base.pararMotores()
+        print("distancia area")
+        if distanciaArea <= 100:
+            print("mover area")
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+
+
+    base.moverDistancia(-100)
+    wait(1500)
+    base.virarAngulo(90)
+    wait(1500)
+    base.moverDistancia(100)
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    if distanciaArea <= 100:
+        base.pararMotores()
+        print("distancia area")
+        robo_brick.beep(500, 100)
+        if distanciaArea <= 100:
+            robo_brick.beep(500, 100)
+            print("mover area")
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+
+    base.moverDistancia(-100)
+    wait(1500)
+    base.virarAngulo(90)
+    wait(1500)
+    base.moverDistancia(100)
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    if distanciaArea <= 100:
+        robo_brick.beep(500, 100)
+        base.pararMotores()
+        print("distancia area")
+        if distanciaArea <= 100:
+            robo_brick.beep(500, 100)
+            print("mover area")
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+                break 
+
+    base.moverDistancia(-100)
+    wait(1500)
+    base.virarAngulo(90)
+    wait(1500)
+    base.moverDistancia(100)
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    if distanciaArea <= 100:
+        base.pararMotores()
+        print("distancia area")
+        if distanciaArea <= 100:
+            robo_brick.beep(500, 100)
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+                break 
+
+    base.moverDistancia(-100)
+    wait(1500)
+    base.pararMotores()
+    if distanciaArea <= 100:
+        base.pararMotores()
+        print("distancia area")
+        if distanciaArea <= 100:
+            robo_brick.beep(500, 100)
+            print("mover area")
+
+    if distanciaArea >= 800: 
+        sensor_dir_vedra = VerificarCorVD()
+        sensor_esq_vedra = VerificarCorVE()
+        while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            base.moverSemParar(200, 0)
+            sensor_dir_vedra = VerificarCorVD()
+            sensor_esq_vedra = VerificarCorVE()
+            if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+                break
+            if distanciaArea <= 100:
+                robo_brick.beep(500,100)
+                base.pararMotores()
+                print("distancia area")
+                if distanciaArea <= 100:
+                    print("mover area")
+                    break 
+
+    base.moverDistancia(-100)
+
 ##INICIO do codigo
 
+motor_garra.moverDuranteUmTempo(500, 1000)
 
 while True:
+    sensor_esqEx_vedra = VerificarCorVEEx()
+    sensor_esq_vedra = VerificarCorVE() 
+    sensor_dirEx_vedra = VerificarCorVDEx()
+    sensor_dir_vedra = VerificarCorVD()
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+
     if seguindoLinha == True:
         seguidorLinha()
     else:
         areaDeResgate()
+        print("area de resgate")
+     
+
+# resetaAngulo()
+# #moverSemPrar
+# while True:
+#     atuailzarSensores()
+#     if(motor.getAngulo >3000):
+#         motorStop()
+#         break
+#     if(sensorDistancia < 10):
+#         motorStop()
+#         break
+#     if(sensor1 == PRETO OR sensor2 == PRETO):
+#         motorStop()
+#         saidaDaArea()
+#         break
+
+#     else: 
+#         cwvwdvs 
