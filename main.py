@@ -107,6 +107,22 @@ def alinharLinha():
             i=i+1
             wait(10)
 
+def eVermelhoD(): # funcao para pegar a cor vermelha do lado direito usando sistema rgb, usando verde e azul p comparacao
+    cor = cor_direita.pegarRGB()
+    # print(cor)
+    if cor[0] > 35 and cor[0] < 57:
+        if cor[0] >= (2 * cor[1]) or cor[0] >= (2 * cor[2]):
+            return True
+        
+def eVermelhoE(): # funcao para pegar a cor vermelha do lado esquerda usando sistema rgb, usando verde e azul p comparacao
+    cor = cor_direita.pegarRGB()
+    # print(cor)
+    if cor[0] > 35 and cor[0] < 57:
+        if cor[0] >= (2 * cor[1]) or cor[0] >= (2 * cor[2]):
+            return True
+        
+
+
 def eVerdeD(): # funcao para pegar a cor verde do lado direito usando sistema rgb, usando verde e vermelho p comparacao
     cor = cor_direita.pegarRGB()
     # print(cor)
@@ -124,6 +140,7 @@ def eVerdeE(): # funcao para pegar a cor verde do lado esquerda usando sistema r
             return True
         
     return False
+
 
 
 # funcao para mover para esquerda quando ver verde
@@ -221,7 +238,6 @@ def VerificarGap():
     # base.virar90grausDireita()
     return True   
 
-
 # quando entra no gap
 def taNoGap():
      print("taNoGap")
@@ -249,11 +265,11 @@ def Obstaculo():
     if Distancia() == True: 
         print ("obstaculo")
         alinharLinha()
-        base.moverDistancia(-30)
+        base.moverDistancia(-50)
         base.pararMotores()
         base.virarAngulo(-90)
         base.pararMotores()
-        base.moverDistancia(310)
+        base.moverDistancia(390)
         base.pararMotores()
         base.virarAngulo(90)
         base.pararMotores()
@@ -293,6 +309,57 @@ def Obstaculo():
                     base.pararMotores()
                 break
 
+# def Obstaculo(): # direita 
+#     sensor_esq_vedra = VerificarCorVE() 
+#     sensor_dir_vedra = VerificarCorVD()
+#     if Distancia() == True: 
+#         print ("obstaculo")
+#         alinharLinha()
+#         base.moverDistancia(-50)
+#         base.pararMotores()
+#         base.virarAngulo(90)
+#         base.pararMotores()
+#         base.moverDistancia(390)
+#         base.pararMotores()
+#         base.virarAngulo(-90)
+#         base.pararMotores()
+#         sensor_esq_vedra = VerificarCorVE() 
+#         sensor_dir_vedra = VerificarCorVD()
+#         base.moverDistancia(670)
+#         base.pararMotores()
+#         base.virarAngulo(-90)
+#         sensor_esq_vedra = VerificarCorVE() 
+#         sensor_dir_vedra = VerificarCorVD()
+#         while sensor_dir_vedra > PRETO and sensor_esq_vedra > PRETO:
+#             print(sensor_dir_vedra, sensor_esq_vedra)
+#             base.moverSemParar(100, 0)
+#             sensor_esq_vedra = VerificarCorVE() 
+#             sensor_dir_vedra = VerificarCorVD()
+#             cor_esquerda.pegarRGB()
+#             cor_direita.pegarRGB()
+#             sensor_esq_vedra = VerificarCorVE() 
+#             sensor_dir_vedra = VerificarCorVD()
+#             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+#                 print("preto obstaculo")
+#                 cor_esquerda.pegarRGB()
+#                 cor_direita.pegarRGB()
+#                 sensor_esq_vedra = VerificarCorVE() 
+#                 sensor_dir_vedra = VerificarCorVD()  
+#                 base.moverDistancia(100)
+#                 if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
+#                     cor_esquerda.pegarRGB()
+#                     cor_direita.pegarRGB()
+#                     sensor_esq_vedra = VerificarCorVE() 
+#                     sensor_dir_vedra = VerificarCorVD()               
+#                     base.pararMotores()
+#                     wait(100)
+#                     base.moverDistancia(50)
+#                     base.pararMotores()
+#                     base.virarAngulo(90)
+#                     base.pararMotores()
+#                 break
+
+
 
 # para quando ver prata
 def Prata():
@@ -307,7 +374,14 @@ def Prata():
 
         if cor_direita.pegarRGB() >= (90, 90, 90) or cor_esquerda.pegarRGB() >= (90, 90, 90):
             print(cor_direita.pegarRGB() and cor_esquerda.pegarRGB())
-            return True
+            base.moverDistancia(-20)
+            base.pararMotores()
+            base.moverDistancia(20)
+            base.pararMotores()
+        
+            if cor_direita.pegarRGB() >= (90, 90, 90) or cor_esquerda.pegarRGB() >= (90, 90, 90):
+                print(cor_direita.pegarRGB() and cor_esquerda.pegarRGB())
+                return True
     
     return False
 
@@ -376,13 +450,13 @@ def seguidorLinha():
         sensor_dir_vedra = VerificarCorVD()
         print ("verde esquerda visto")
         print(cor_esquerda.pegarRGB())
-        base.moverDistancia(2)
+        base.moverDistancia(-10)
         base.pararMotores()
         # robo_brick.beep(500, 100)
         # wait(20)
 
         if eVerdeE():
-            base.moverDistancia(20)
+            base.moverDistancia(40)
             base.pararMotores()
             print("verde dnv esquerda")
             print(cor_esquerda.pegarRGB())
@@ -411,7 +485,7 @@ def seguidorLinha():
                     # robo_brick.beep(100, 100)
                     if cor_esq_verd > cor_esq_verm:
                         print("preto apos verde esquerda")
-                        base.moverDistancia(75)
+                        base.moverDistancia(70)
                         base.pararMotores()
                         VerdeEsquerda()
                         base.moverDistancia(-55)
@@ -432,13 +506,13 @@ def seguidorLinha():
         sensor_dir_vedra = VerificarCorVD()
         print ("verde direito visto")
         print(cor_direita.pegarRGB())
-        base.moverDistancia(10)
+        base.moverDistancia(-10)
         base.pararMotores()
 
         if eVerdeD():
             print("verde dnv direita")
             print(cor_direita.pegarRGB())
-            base.moverDistancia(30)
+            base.moverDistancia(40)
             base.pararMotores()
             # cor_direita.pegarRGB()[1]
             # print("teste")
@@ -466,7 +540,7 @@ def seguidorLinha():
                 if cor_dir_verm < PRETODIR:
                     if cor_dir_verd > cor_dir_verm:
                             print("preto apos verde direita")
-                            base.moverDistancia(75)
+                            base.moverDistancia(70)
                             base.pararMotores()
                             print(cor_direita.pegarRGB())
                             VerdeDireita()
@@ -478,7 +552,48 @@ def seguidorLinha():
                     if cor_dir_verd > cor_dir_verm:
                             base.moverDistancia(20)
                             base.pararMotores()
+ 
+    elif eVermelhoE(): # vermelho esquerdo
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
+        print ("vermelho esquerda visto")
+        print(cor_esquerda.pegarRGB())
+        base.moverDistancia(2)
+        base.pararMotores()
 
+
+        if eVermelhoE():
+            base.moverDistancia(20)
+            base.pararMotores()
+            print("vermelho dnv esquerda")
+            print(cor_esquerda.pegarRGB())
+            print("vermelho parar")
+            base.pararMotores()
+            while True: 
+                base.pararMotores()
+
+    elif eVermelhoD(): # vermelho direito
+        sensor_esqEx_vedra = VerificarCorVEEx()
+        sensor_esq_vedra = VerificarCorVE() 
+        sensor_dirEx_vedra = VerificarCorVDEx()
+        sensor_dir_vedra = VerificarCorVD()
+        print (" vermelho direito visto")
+        print(cor_esquerda.pegarRGB())
+        base.moverDistancia(2)
+        base.pararMotores()
+
+
+        if eVermelhoD():
+            base.moverDistancia(20)
+            base.pararMotores()
+            print("vermelho dnv direito")
+            print(cor_esquerda.pegarRGB())
+            print("vermelho parar")
+            base.pararMotores()
+            while True: 
+                base.pararMotores()
         
     # quando entrar no branco, 
     # ele vai verificar se ta no gap, caso esteja, 
@@ -520,6 +635,7 @@ def seguidorLinha():
         return
         base.pararMotores()
 
+
     # codigo seguidor de linha
     else: 
         print ("linha preta")
@@ -530,18 +646,60 @@ def seguidorLinha():
         codigoSeguidor.seguirLinhaPreta(
         kd=0.5, # analisa de acordo com a poisçao do começo
         kp=1, # proporcional no momento instante que ocorre o erro
-        cor_vermelha_direta=(sensor_esq_vedra + sensor_esqEx_vedra * 2) - 20,
-        cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2,
+        cor_vermelha_direta=(sensor_esq_vedra + sensor_esqEx_vedra * 2.5) - 20,
+        cor_vermelha_esquerda=sensor_dir_vedra + sensor_dirEx_vedra * 2.5,
         motor_direito=motor_d,
         motor_esquerdo=motor_e,
         potencia_motores=70
         )
 
-def areaDeResgate():
-    global distanciaArea
-    global seguindoLinha
-    distanciaArea = sensor_ultrassonico.pegarDistancia()
+# def areaDeResgate():
+    # global distanciaArea
+    # global seguindoLinha
+    # distanciaArea = sensor_ultrassonico.pegarDistancia()
 
+    # sensor_esqEx_vedra = VerificarCorVEEx()
+    # sensor_esq_vedra = VerificarCorVE() 
+    # sensor_dirEx_vedra = VerificarCorVDEx()
+    # sensor_dir_vedra = VerificarCorVD()
+    # motor_garra.moverDuranteUmTempo(-500, 1000)
+    # motor_garra.deixarMotorLivre()
+    # base.moverDistancia(550)
+    # base.pararMotores()
+    # print("verificacAO")
+
+    # while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO:
+    #     sensor_esqEx_vedra = VerificarCorVEEx()
+    #     sensor_esq_vedra = VerificarCorVE() 
+    #     sensor_dirEx_vedra = VerificarCorVDEx()
+    #     sensor_dir_vedra = VerificarCorVD()
+    #     VerificacaoArea()
+
+    #     # if distanciaArea <= 10:
+    #     #     base.pararMotores()
+    #     #     print("distancia area")
+
+    #     if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
+    #         robo_brick.beep(500, 100)
+    #         base.pararMotores()
+    #         seguindoLinha = True
+    #         return
+
+    
+    # print("akksks")
+
+
+def areaDeResgate():
+    Angulo = 55
+    DistanciaGrande = 750
+    global distanciaArea
+    distanciaArea = sensor_ultrassonico.pegarDistancia()
+    # print (distanciaArea)
+    global sensor_esqEx_vedra
+    global sensor_esq_vedra 
+    global sensor_dirEx_vedra 
+    global sensor_dir_vedra 
+    global seguindoLinha
     sensor_esqEx_vedra = VerificarCorVEEx()
     sensor_esq_vedra = VerificarCorVE() 
     sensor_dirEx_vedra = VerificarCorVDEx()
@@ -551,39 +709,6 @@ def areaDeResgate():
     base.moverDistancia(550)
     base.pararMotores()
     print("verificacAO")
-
-    while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO:
-        sensor_esqEx_vedra = VerificarCorVEEx()
-        sensor_esq_vedra = VerificarCorVE() 
-        sensor_dirEx_vedra = VerificarCorVDEx()
-        sensor_dir_vedra = VerificarCorVD()
-        VerificacaoArea()
-
-        # if distanciaArea <= 10:
-        #     base.pararMotores()
-        #     print("distancia area")
-
-        if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
-            robo_brick.beep(500, 100)
-            base.pararMotores()
-            seguindoLinha = True
-            return
-
-    
-    print("akksks")
-
-
-def VerificacaoArea():
-    global distanciaArea
-    distanciaArea = sensor_ultrassonico.pegarDistancia()
-    global sensor_esqEx_vedra
-    global sensor_esq_vedra 
-    global sensor_dirEx_vedra 
-    global sensor_dir_vedra 
-    sensor_esqEx_vedra = VerificarCorVEEx()
-    sensor_esq_vedra = VerificarCorVE() 
-    sensor_dirEx_vedra = VerificarCorVDEx()
-    sensor_dir_vedra = VerificarCorVD()
     if distanciaArea <= 100:
         robo_brick.beep(500, 100)
         base.pararMotores()
@@ -592,15 +717,23 @@ def VerificacaoArea():
             robo_brick.beep(500, 100)
             print("mover area")
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            distanciaArea = sensor_ultrassonico.pegarDistancia()
             base.moverSemParar(200, 0)
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
+
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                seguindoLinha = True
+                base.moverDistancia(50)
+                base.pararMotores()
+                print ("to saindo 1")
+                return
 
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
@@ -608,9 +741,22 @@ def VerificacaoArea():
                 print("distancia area")
                 if distanciaArea <= 100:
                     print("mover area")
+                    break
+
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.pararMotores()
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-80)
+            base.moverDistancia(-(Angulo + 2))
+            base.pararMotores()
 
     wait(1500)
-    base.virarAngulo(90)
+    base.virarAngulo(Angulo)
     wait(1500)
     base.moverDistancia(100)
     distanciaArea = sensor_ultrassonico.pegarDistancia()
@@ -621,26 +767,45 @@ def VerificacaoArea():
         if distanciaArea <= 100:
             print("mover area")
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            distanciaArea = sensor_ultrassonico.pegarDistancia()
             base.moverSemParar(200, 0)
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                seguindoLinha = True
+                print ("to saindo 2")
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                base.moverDistancia(50)
+                base.pararMotores()
+                return
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
                 base.pararMotores()
                 print("distancia area")
                 if distanciaArea <= 100:
                     print("mover area")
+                    break
 
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.pararMotores()
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea  >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-80)
+            base.moverDistancia(- (Angulo + 2))
+            base.pararMotores()
 
     base.moverDistancia(-100)
     wait(1500)
-    base.virarAngulo(90)
+    base.virarAngulo(55)
     wait(1500)
     base.moverDistancia(100)
     distanciaArea = sensor_ultrassonico.pegarDistancia()
@@ -652,25 +817,44 @@ def VerificacaoArea():
             robo_brick.beep(500, 100)
             print("mover area")
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
             base.moverSemParar(200, 0)
+            distanciaArea = sensor_ultrassonico.pegarDistancia()
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                seguindoLinha = True
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                base.moverDistancia(50)
+                base.pararMotores()
+                print ('to saindo 3')
+                return
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
                 base.pararMotores()
                 print("distancia area")
                 if distanciaArea <= 100:
                     print("mover area")
+                    break
+
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea  >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-100)
+            base.moverDistancia(- (Angulo + 2))
+            base.pararMotores()
 
     base.moverDistancia(-100)
     wait(1500)
-    base.virarAngulo(90)
+    base.virarAngulo(Angulo)
     wait(1500)
     base.moverDistancia(100)
     distanciaArea = sensor_ultrassonico.pegarDistancia()
@@ -682,15 +866,22 @@ def VerificacaoArea():
             robo_brick.beep(500, 100)
             print("mover area")
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            distanciaArea = sensor_ultrassonico.pegarDistancia()
             base.moverSemParar(200, 0)
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                seguindoLinha = True
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                base.moverDistancia(50)
+                base.pararMotores()
+                print ("to saindo 4")
+                return
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
                 base.pararMotores()
@@ -699,9 +890,20 @@ def VerificacaoArea():
                     print("mover area")
                 break 
 
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea  >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-80)
+            base.moverDistancia(- (Angulo + 2))
+            base.pararMotores()
+
     base.moverDistancia(-100)
     wait(1500)
-    base.virarAngulo(90)
+    base.virarAngulo(Angulo)
     wait(1500)
     base.moverDistancia(100)
     distanciaArea = sensor_ultrassonico.pegarDistancia()
@@ -711,22 +913,40 @@ def VerificacaoArea():
         if distanciaArea <= 100:
             robo_brick.beep(500, 100)
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
+            distanciaArea = sensor_ultrassonico.pegarDistancia()
             base.moverSemParar(200, 0)
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                seguindoLinha = True
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                base.moverDistancia(50)
+                base.pararMotores()
+                print("to saindo 5")
+                return
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
                 base.pararMotores()
                 print("distancia area")
                 if distanciaArea <= 100:
                     print("mover area")
-                break 
+                    break 
+
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea  >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-80)
+            base.moverDistancia(-(Angulo + 2))
+            base.pararMotores()
 
     base.moverDistancia(-100)
     wait(1500)
@@ -738,7 +958,7 @@ def VerificacaoArea():
             robo_brick.beep(500, 100)
             print("mover area")
 
-    if distanciaArea >= 800: 
+    if distanciaArea >= DistanciaGrande: 
         sensor_dir_vedra = VerificarCorVD()
         sensor_esq_vedra = VerificarCorVE()
         while sensor_dir_vedra >= PRETO or sensor_esq_vedra >= PRETO: 
@@ -746,7 +966,13 @@ def VerificacaoArea():
             sensor_dir_vedra = VerificarCorVD()
             sensor_esq_vedra = VerificarCorVE()
             if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO:
-                break
+                base.pararMotores()
+                seguindoLinha = True
+                motor_garra.moverDuranteUmTempo(500, 1000)
+                base.moverDistancia(50)
+                base.pararMotores()
+                print("to saindo 6")
+                return
             if distanciaArea <= 100:
                 robo_brick.beep(500,100)
                 base.pararMotores()
@@ -755,11 +981,27 @@ def VerificacaoArea():
                     print("mover area")
                     break 
 
+    if distanciaArea >= 200 and distanciaArea <= 370: 
+        robo_brick.beep(500,100)
+        base.moverDistancia(500)
+        base.pararMotores()
+        print("distancia triangulo")
+        if distanciaArea  >= 200 and distanciaArea <= 370:
+            print("mover triangulo")
+            base.moverDistancia(-80)
+            base.moverDistancia(- (Angulo + 2))
+            base.pararMotores
+
     base.moverDistancia(-100)
 
 ##INICIO do codigo
 
 motor_garra.moverDuranteUmTempo(500, 1000)
+
+# while True: 
+#     print(cor_esquerda.pegarRGB())
+#     wait(2000)
+    
 
 while True:
     sensor_esqEx_vedra = VerificarCorVEEx()
@@ -769,26 +1011,9 @@ while True:
     distanciaArea = sensor_ultrassonico.pegarDistancia()
 
     if seguindoLinha == True:
+        print("seguidor linha")
         seguidorLinha()
     else:
-        areaDeResgate()
         print("area de resgate")
-     
-
-# resetaAngulo()
-# #moverSemPrar
-# while True:
-#     atuailzarSensores()
-#     if(motor.getAngulo >3000):
-#         motorStop()
-#         break
-#     if(sensorDistancia < 10):
-#         motorStop()
-#         break
-#     if(sensor1 == PRETO OR sensor2 == PRETO):
-#         motorStop()
-#         saidaDaArea()
-#         break
-
-#     else: 
-#         cwvwdvs 
+        areaDeResgate()
+        print("area de resgate saida")
