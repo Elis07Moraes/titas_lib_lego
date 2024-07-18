@@ -62,6 +62,7 @@ PRETODIR = 10
 
 PRETOESQ = 10
 
+contadorGap = 0
 
 seguindoLinha = True
 
@@ -81,7 +82,10 @@ def VerificarCorVD():
 def VerificarCorVDEx():
     return sensor_vendra.read(0)[3]
 
-
+def TudoPreto():
+    if sensor_dir_vedra <= PRETO and sensor_dirEx_vedra <= PRETO and sensor_esq_vedra <= PRETO and sensor_esqEx_vedra <= PRETO:
+        base.moverDistancia(50)
+        base.pararMotores()
 
 def alinharLinha():
         i=0
@@ -463,6 +467,7 @@ def Prata():
 #     wait(2000)
 
 def Gap2():
+    global contadorGap
     base.pararMotores()
     wait(100)
     motor_d.moverUmAngulo(500, 2 * 360, False)
@@ -477,6 +482,8 @@ def Gap2():
         if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
             motor_d.pararMotorInstantaneamente()
             motor_e.pararMotorInstantaneamente()
+            print ("resetei contador")
+            contadorGap = 0
             return False 
         wait(20)
         i += 1 
@@ -494,6 +501,8 @@ def Gap2():
         if sensor_dir_vedra <= PRETO or sensor_esq_vedra <= PRETO:
             motor_d.pararMotorInstantaneamente()
             motor_e.pararMotorInstantaneamente()
+            contadorGap = 0
+            print("resetei o gap")
             return False 
         wait(20)
         i += 1
@@ -521,6 +530,7 @@ def seguidorLinha():
     global BRANCOESQ
     global PRETODIR
     global PRETOESQ
+    global contadorGap
 
     # motor_d.moverPorPotencia(potencia=70)
     # motor_e.moverPorPotencia(potencia=70)
@@ -777,14 +787,26 @@ def seguidorLinha():
 
             while sensor_esq_vedra >= BRANCO and sensor_dir_vedra >= BRANCO:
                 taNoGap()
+                global contadorGap
+                contadorGap += 1
+                print ("+ contador")
                 sensor_esq_vedra = VerificarCorVE()
                 sensor_dir_vedra = VerificarCorVD()
                 sensor_dirEx_vedra = VerificarCorVDEx()
                 sensor_esqEx_vedra = VerificarCorVEEx()
 
+                if contadorGap == 2: 
+                    print("contador deu 2")
+                    base.moverDistancia(-600)
+                    base.pararMotores()
+                    seguindoLinha = False
+                    break
+
                 if sensor_esq_vedra <= PRETO or sensor_dir_vedra <= PRETO or sensor_dirEx_vedra <= PRETO or sensor_esqEx_vedra <= PRETO:
+                    contadorGap = 0 
                     break
         else: 
+            contadorGap = 0
             print ("saiu do branco")
 
     elif Distancia(): # obstaculo 
@@ -797,28 +819,33 @@ def seguidorLinha():
         return
     #     base.pararMotores()
 
-    elif NoventaGrausD() == True:
+    elif TudoPreto():
+        print("tudo preto")
         base.pararMotores()
-        wait(3000)
-        if NoventaGrausD() == False: 
-            print("noventa graus falso")
 
-    elif NoventaGrausE() == True:
-        print("noventa grau esquerda")
-        base.pararMotores()
-        wait(3000)
-        if NoventaGrausE() == False:
-            print("noventa graus falso")
+
+    # elif NoventaGrausD() == True:
+    #     base.pararMotores()
+    #     wait(3000)
+    #     if NoventaGrausD() == False: 
+    #         print("noventa graus falso")
+
+    # elif NoventaGrausE() == True:
+    #     print("noventa grau esquerda")
+    #     base.pararMotores()
+    #     wait(3000)
+    #     if NoventaGrausE() == False:
+    #         print("noventa graus falso")
 
     elif sensor_dirEx_vedra <= PRETO or sensor_esqEx_vedra <= PRETO:
         # wait(100)
         # base.pararMotores()
         if sensor_esqEx_vedra <= PRETO and  sensor_esq_vedra > PRETO:
-            print("viu extremidade esq") 
+            print("viu extremidade esquerda ") 
             # motor_e.moverDuranteUmTempo(-250, 1000)
             # motor_d.moverDuranteUmTempo(-500, 1000)
             base.moverDistancia(-50)
-            base.virarAngulo(15)
+            base.virarAngulo(-15)
             base.pararMotores()
             return 
         if sensor_dirEx_vedra <= PRETO and sensor_dir_vedra > PRETO: 
@@ -826,7 +853,7 @@ def seguidorLinha():
                 # motor_e.moverDuranteUmTempo(-500, 1000)
                 # motor_d.moverDuranteUmTempo(-250, 1000)
                 base.moverDistancia(-50)
-                base.virarAngulo(-15)
+                base.virarAngulo(15)
                 base.pararMotores()
                 return
         
